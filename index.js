@@ -1,6 +1,15 @@
-// index.js
+// 1. Check if the user is logged in
+if (!localStorage.getItem('user')) {
+    window.location.href = 'login.html';  // Redirect to login if not logged in
+}
 
-// Handle navigation between tabs
+// 2. Function to log out the user
+function logOut() {
+    localStorage.removeItem('user');
+    window.location.href = 'login.html';  // Redirect to login after logout
+}
+
+// 3. Function to handle navigation between tabs
 function navigate(tab) {
     const mainContent = document.getElementById('main-content');
 
@@ -20,138 +29,116 @@ function navigate(tab) {
     }
 }
 
-// Display cards in your collection
+// 4. Function to display the collection of cards
 function displayCollection() {
-    const collectionContainer = document.getElementById("main-content");
-    collectionContainer.innerHTML += '<h2>Collection</h2>';
+    const user = localStorage.getItem('user');
     
-    let storedCards = JSON.parse(localStorage.getItem('cards')) || [];
-    storedCards.forEach(card => {
-        const cardElement = document.createElement("div");
-        cardElement.classList.add("card-item");
-        
-        const img = document.createElement("img");
-        img.src = card.image;
-        
-        const categoryLabel = document.createElement("p");
-        categoryLabel.textContent = `Category: ${card.category}`;
-        
-        const removeButton = document.createElement("span");
-        removeButton.classList.add("remove-card");
+    if (!user) {
+        alert("You must be logged in to view your collection.");
+        return;
+    }
+
+    let collection = JSON.parse(localStorage.getItem(user + '_collection')) || [];
+
+    const collectionContainer = document.getElementById('main-content');
+    collectionContainer.innerHTML = '<h1>Your Collection</h1>';
+
+    // Add a button to add new cards
+    collectionContainer.innerHTML += '<button onclick="addCard()">Add New Card</button>';
+
+    collection.forEach(card => {
+        const cardElement = document.createElement('div');
+        cardElement.textContent = `Card ID: ${card.id}, Name: ${card.name}, Category: ${card.category}`;
+
+        // Add a remove button to each card
+        const removeButton = document.createElement('button');
         removeButton.textContent = "Remove";
         removeButton.onclick = () => removeCard(card.id);
-        
-        cardElement.appendChild(img);
-        cardElement.appendChild(categoryLabel);
         cardElement.appendChild(removeButton);
-        
+
         collectionContainer.appendChild(cardElement);
     });
 }
 
-// Display your deck-building preview
-function displayDecks() {
-    const decksContainer = document.getElementById("main-content");
-    decksContainer.innerHTML += '<h2>Deck Preview</h2>';
+// 5. Function to add a new card
+function addCard() {
+    const user = localStorage.getItem('user');
     
-    let savedDeck = JSON.parse(localStorage.getItem('currentDeck')) || [];
-    savedDeck.forEach(card => {
-        const cardElement = document.createElement("div");
-        cardElement.classList.add("card-item");
+    if (!user) {
+        alert("You must be logged in to add cards.");
+        return;
+    }
 
-        const img = document.createElement("img");
-        img.src = card.image;
+    const newCard = { 
+        id: Date.now(),  // Use the current timestamp as a unique ID
+        name: prompt("Enter the name of the card:"), 
+        category: prompt("Enter the category of the card:") 
+    };
 
-        const categoryLabel = document.createElement("p");
-        categoryLabel.textContent = `Category: ${card.category}`;
+    let collection = JSON.parse(localStorage.getItem(user + '_collection')) || [];
+    collection.push(newCard);
+    localStorage.setItem(user + '_collection', JSON.stringify(collection));
 
-        decksContainer.appendChild(cardElement);
-    });
+    displayCollection();  // Refresh the collection display
 }
 
-// Handle card removal from collection
+// 6. Function to remove a card
 function removeCard(cardId) {
-    let storedCards = JSON.parse(localStorage.getItem('cards')) || [];
-    storedCards = storedCards.filter(card => card.id !== cardId);
-    localStorage.setItem('cards', JSON.stringify(storedCards));
-    displayCollection();
-}
-
-// Log out the user
-function logOut() {
-    localStorage.removeItem('user');
-    window.location.href = 'login.html';  // Redirect to login
-}
-
-// Display storages
-function displayStorages() {
-    const storagesContainer = document.getElementById('main-content');
-    storagesContainer.innerHTML += '<h2>Your Storages</h2>';
-
-    let storages = JSON.parse(localStorage.getItem('storages')) || {};
-    for (let storageName in storages) {
-        const storageDiv = document.createElement("div");
-        storageDiv.classList.add("storage-item");
-        storageDiv.textContent = `Storage: ${storageName}`;
-        
-        // View button for storages
-        const viewButton = document.createElement("button");
-        viewButton.textContent = "View Cards";
-        viewButton.onclick = () => displayStorageCards(storageName);
-        
-        storageDiv.appendChild(viewButton);
-        storagesContainer.appendChild(storageDiv);
-    }
-}
-
-// Display cards inside a specific storage
-function displayStorageCards(storageName) {
-    const storagesContainer = document.getElementById('main-content');
-    storagesContainer.innerHTML = '<h2>Storage: ' + storageName + '</h2>';
+    const user = localStorage.getItem('user');
     
-    let storages = JSON.parse(localStorage.getItem('storages'));
-    let storageCards = storages[storageName] || [];
+    if (!user) {
+        alert("You must be logged in to remove cards.");
+        return;
+    }
 
-    storageCards.forEach(card => {
-        const cardElement = document.createElement("div");
-        cardElement.classList.add("card-item");
+    let collection = JSON.parse(localStorage.getItem(user + '_collection')) || [];
+    collection = collection.filter(card => card.id !== cardId);  // Remove card with matching ID
+    localStorage.setItem(user + '_collection', JSON.stringify(collection));
 
-        const img = document.createElement("img");
-        img.src = card.image;
+    displayCollection();  // Refresh the collection display
+}
 
-        const categoryLabel = document.createElement("p");
-        categoryLabel.textContent = `Category: ${card.category}`;
+// 7. Function to display the user's decks (for demonstration purposes, can be customized)
+function displayDecks() {
+    const user = localStorage.getItem('user');
+    
+    if (!user) {
+        alert("You must be logged in to view your decks.");
+        return;
+    }
 
-        storagesContainer.appendChild(cardElement);
+    let decks = JSON.parse(localStorage.getItem(user + '_decks')) || [];
+
+    const decksContainer = document.getElementById('main-content');
+    decksContainer.innerHTML = '<h1>Your Decks</h1>';
+
+    decks.forEach(deck => {
+        const deckElement = document.createElement('div');
+        deckElement.textContent = `Deck Name: ${deck.name}`;
+        decksContainer.appendChild(deckElement);
     });
 }
 
-// Adding new card (from file input)
-function addNewCard() {
-    const cardImage = document.getElementById("card-image").files[0];
-    const cardCategory = document.getElementById("card-category").value;
-
-    if (cardImage && cardCategory) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const card = {
-                id: new Date().toISOString(),  // Unique ID based on time
-                image: event.target.result,  // Base64-encoded image
-                category: cardCategory
-            };
-            saveCardToStorage(card);
-            displayCollection();
-        };
-        reader.readAsDataURL(cardImage);
-    } else {
-        alert("Please provide both an image and a category.");
+// 8. Function to display the user's storages (for demonstration purposes, can be customized)
+function displayStorages() {
+    const user = localStorage.getItem('user');
+    
+    if (!user) {
+        alert("You must be logged in to view your storages.");
+        return;
     }
+
+    let storages = JSON.parse(localStorage.getItem(user + '_storages')) || [];
+
+    const storagesContainer = document.getElementById('main-content');
+    storagesContainer.innerHTML = '<h1>Your Storages</h1>';
+
+    storages.forEach(storage => {
+        const storageElement = document.createElement('div');
+        storageElement.textContent = `Storage Name: ${storage.name}`;
+        storagesContainer.appendChild(storageElement);
+    });
 }
 
-// Save card to localStorage
-function saveCardToStorage(card) {
-    let storedCards = JSON.parse(localStorage.getItem('cards')) || [];
-    storedCards.push(card);
-    localStorage.setItem('cards', JSON.stringify(storedCards));
-}
-
+// Initialize the page to load the collection view by default
+navigate('collection');
