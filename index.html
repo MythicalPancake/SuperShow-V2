@@ -9,7 +9,6 @@
 </head>
 <body>
 
-    <!-- Navigation Bar (Tabs) -->
     <div id="nav-bar">
         <button onclick="navigate('home')">Home</button>
         <button onclick="navigate('collection')">Collection</button>
@@ -23,5 +22,13 @@
     </div>
 
     <script src="index.js"></script>
+
+    <script>
+        // Check if the user is logged in
+        if (!localStorage.getItem('user')) {
+            window.location.href = 'login.html';  // Redirect to login if not logged in
+        }
+    </script>
+
 </body>
 </html>
