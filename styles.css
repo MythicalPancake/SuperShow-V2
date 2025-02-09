@@ -9,11 +9,31 @@ h1, h3 {
     text-align: center;
 }
 
-#login-container, #collection, #storages, #card-form, #storage-form {
-    margin: 20px auto;
-    width: 50%;
+#nav-bar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#nav-bar button {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#nav-bar button:hover {
+    background-color: #45a049;
+}
+
+#main-content {
+    width: 80%;
+    margin: 0 auto;
     background-color: white;
-    padding: 15px;
+    padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -62,3 +82,4 @@ button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
 }
+
