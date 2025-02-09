@@ -1,35 +1,28 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Trading Card Collection</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
 </head>
 <body>
-
-    <div id="nav-bar">
+    <!-- Navigation Bar -->
+    <nav>
         <button onclick="navigate('home')">Home</button>
         <button onclick="navigate('collection')">Collection</button>
         <button onclick="navigate('decks')">Decks</button>
         <button onclick="navigate('storages')">Storages</button>
         <button onclick="logOut()">Log Out</button>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div id="main-content">
+        <!-- Content will be dynamically loaded here based on navigation -->
     </div>
 
- <!-- Add this inside your main content -->
-<div id="main-content">
-    <!-- Content will be dynamically loaded here -->
-</div>
-
+    <!-- Link to your JavaScript file -->
     <script src="index.js"></script>
-
-    <script>
-        // Check if the user is logged in
-        if (!localStorage.getItem('user')) {
-            window.location.href = 'login.html';  // Redirect to login if not logged in
-        }
-    </script>
-
 </body>
 </html>
+
