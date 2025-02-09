@@ -1,22 +1,21 @@
 // login.js
 
-// Example user credentials for testing (you can modify or replace this with a backend)
-const storedUsername = "user123";
-const storedPassword = "password123";
-
-// Handle the login form submission
 document.getElementById('loginForm').addEventListener('submit', function(event) {
-    event.preventDefault();  // Prevent the form from submitting
+    event.preventDefault();  // Prevent form submission
 
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
 
-    // Check if the credentials match
-    if (username === storedUsername && password === storedPassword) {
-        // Store the username in localStorage to indicate the user is logged in
+    // Check if the credentials are in localStorage (we assume registration has already happened)
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+
+    // Find user by username
+    const user = users.find(u => u.username === username && u.password === password);
+
+    if (user) {
+        // Save username in localStorage and redirect to main page
         localStorage.setItem('user', username);
-        // Redirect to the collection page
-        window.location.href = 'index.html';
+        window.location.href = 'index.html';  // Redirect to collection page
     } else {
         alert("Invalid username or password. Please try again.");
     }
