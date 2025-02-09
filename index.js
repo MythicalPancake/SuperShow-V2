@@ -162,5 +162,29 @@ function deleteDeck(deckName) {
     localStorage.setItem(user + '_decks', JSON.stringify(decks));
     loadDecks();
 }
+function makeListDraggable() {
+    const list = document.getElementById('collection');
+    const draggables = list.querySelectorAll('li');
+    draggables.forEach(draggable => {
+        draggable.addEventListener('dragstart', dragStart);
+        draggable.addEventListener('dragover', dragOver);
+        draggable.addEventListener('drop', dropCard);
+    });
+}
+
+function dragStart(e) {
+    e.dataTransfer.setData('text/plain', e.target.id);
+}
+
+function dragOver(e) {
+    e.preventDefault();
+}
+
+function dropCard(e) {
+    e.preventDefault();
+    const draggedId = e.dataTransfer.getData('text/plain');
+    const draggedElement = document.getElementById(draggedId);
+    // Logic to move the card in the collection
+}
 
 navigate('home');
