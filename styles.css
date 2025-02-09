@@ -1,85 +1,32 @@
-/* styles.css */
 body {
     font-family: Arial, sans-serif;
-    padding: 20px;
-    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
 }
 
-h1, h3 {
-    text-align: center;
+nav {
+    background-color: #333;
+    padding: 10px;
 }
 
-#nav-bar {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-#nav-bar button {
-    padding: 10px 15px;
-    background-color: #4CAF50;
+nav button {
     color: white;
+    background-color: #444;
     border: none;
-    border-radius: 5px;
+    margin: 5px;
+    padding: 10px;
     cursor: pointer;
 }
 
-#nav-bar button:hover {
-    background-color: #45a049;
+nav button:hover {
+    background-color: #555;
 }
 
 #main-content {
-    width: 80%;
-    margin: 0 auto;
-    background-color: white;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.card-item {
-    display: inline-block;
-    width: 100px;
-    margin: 10px;
-    text-align: center;
-}
-
-.card-item img {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-}
-
-.remove-card {
-    color: red;
-    cursor: pointer;
-}
-
-button {
-    padding: 10px 15px;
+    background-color: white;
     margin-top: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
 }
 
-button:hover {
-    background-color: #45a049;
-}
-
-input[type="text"], input[type="file"], input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-
-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
 
