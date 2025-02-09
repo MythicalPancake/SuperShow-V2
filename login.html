@@ -8,17 +8,20 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div id="login-form">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" required>
 
-    <h1>Welcome to Your Trading Card Collection</h1>
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
 
-    <div id="login-container">
-        <h3>Sign In</h3>
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" id="password" placeholder="Password">
-        <button onclick="signIn()">Sign In</button>
-        <p id="error-message"></p>
+            <button type="submit">Log In</button>
+        </form>
     </div>
 
     <script src="login.js"></script>
 </body>
 </html>
+
