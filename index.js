@@ -141,7 +141,6 @@ function deleteDeck(deckName) {
     loadDecks();
 }
 
-navigate('home');
 
 function makeListDraggable() {
     const list = document.getElementById('collection');
