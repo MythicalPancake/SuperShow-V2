@@ -199,4 +199,14 @@ function displayStorages() {
     let storages = JSON.parse(localStorage.getItem(user + '_storages')) || [];
 
     const storagesContainer = document.getElementById('main-content');
-    storagesContainer.innerHTM
+    storagesContainer.innerHTML = '<h1>Your Storages</h1>';
+
+    storages.forEach(storage => {
+        const storageElement = document.createElement('div');
+        storageElement.textContent = `Storage Name: ${storage.name}`;
+        storagesContainer.appendChild(storageElement);
+    });
+}
+
+// Initialize the page to load the collection view by default
+navigate('home');
