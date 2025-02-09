@@ -48,7 +48,7 @@ function displayCollection() {
 
     collection.forEach(card => {
         const cardElement = document.createElement('div');
-        cardElement.textContent = `Card ID: ${card.id}, Name: ${card.name}, Category: ${card.category}`;
+        cardElement.innerHTML = `<h3>${card.name}</h3>`; // Name above the image
         
         // Display the image if it exists
         if (card.image) {
@@ -82,10 +82,12 @@ function addCard() {
     // Get the card details from the user
     const name = prompt("Enter the name of the card:");
     const category = prompt("Enter the category of the card:");
+
     const imageInput = document.createElement('input');
     imageInput.type = 'file';
     imageInput.accept = 'image/*';
 
+    // File input will only show when the user is adding a new card
     imageInput.onchange = (event) => {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -142,7 +144,7 @@ function displayDecks() {
 
     decks.forEach(deck => {
         const deckElement = document.createElement('div');
-        deckElement.textContent = `Deck Name: ${deck.name}`;
+        deckElement.innerHTML = `<h3>${deck.name}</h3>`;  // Name of the deck
 
         // Add button to edit deck (add cards)
         const editButton = document.createElement('button');
@@ -172,7 +174,7 @@ function editDeck(deck) {
     // Display cards in the collection and allow selecting them for the deck
     collection.forEach(card => {
         const cardElement = document.createElement('div');
-        cardElement.textContent = `Card Name: ${card.name}, Category: ${card.category}`;
+        cardElement.innerHTML = `Card Name: ${card.name}, Category: ${card.category}`;
         
         // Button to add card to the deck
         const addButton = document.createElement('button');
@@ -203,10 +205,10 @@ function displayStorages() {
 
     storages.forEach(storage => {
         const storageElement = document.createElement('div');
-        storageElement.textContent = `Storage Name: ${storage.name}`;
+        storageElement.innerHTML = `<h3>${storage.name}</h3>`;  // Display storage name
         storagesContainer.appendChild(storageElement);
     });
 }
 
 // Initialize the page to load the collection view by default
-navigate('home');
+navigate('collection');
