@@ -1,40 +1,61 @@
 // index.js
 
-// Display user's name
-window.onload = function() {
-    const username = localStorage.getItem('user');
-    if (username) {
-        document.getElementById('user-name').textContent = username;
+// Handle navigation between tabs
+function navigate(tab) {
+    const mainContent = document.getElementById('main-content');
+
+    if (tab === 'home') {
+        mainContent.innerHTML = '<h1>Welcome, ' + localStorage.getItem('user') + '</h1>';
+        mainContent.innerHTML += '<p>Welcome to your Trading Card Collection!</p>';
         displayCollection();
+    } else if (tab === 'collection') {
+        mainContent.innerHTML = '<h1>Your Collection</h1>';
+        displayCollection();
+    } else if (tab === 'decks') {
+        mainContent.innerHTML = '<h1>Your Decks</h1>';
+        displayDecks();
+    } else if (tab === 'storages') {
+        mainContent.innerHTML = '<h1>Your Storages</h1>';
         displayStorages();
-    } else {
-        window.location.href = 'login.html';  // Redirect to login if no user is logged in
     }
-};
-
-// Log out the user
-function logOut() {
-    localStorage.removeItem('user');
-    window.location.href = 'login.html';
 }
 
-// Save card to localStorage
-function saveCardToStorage(card) {
-    let storedCards = JSON.parse(localStorage.getItem('cards')) || [];
-    storedCards.push(card);
-    localStorage.setItem('cards', JSON.stringify(storedCards));
-    console.log("Cards in storage:", storedCards);
-}
-
-// Display all cards in collection
+// Display cards in your collection
 function displayCollection() {
-    const collectionContainer = document.getElementById("collection");
-    collectionContainer.innerHTML = '';  // Clear current display
-
+    const collectionContainer = document.getElementById("main-content");
+    collectionContainer.innerHTML += '<h2>Collection</h2>';
+    
     let storedCards = JSON.parse(localStorage.getItem('cards')) || [];
-    console.log("Stored Cards:", storedCards);
-
     storedCards.forEach(card => {
+        const cardElement = document.createElement("div");
+        cardElement.classList.add("card-item");
+        
+        const img = document.createElement("img");
+        img.src = card.image;
+        
+        const categoryLabel = document.createElement("p");
+        categoryLabel.textContent = `Category: ${card.category}`;
+        
+        const removeButton = document.createElement("span");
+        removeButton.classList.add("remove-card");
+        removeButton.textContent = "Remove";
+        removeButton.onclick = () => removeCard(card.id);
+        
+        cardElement.appendChild(img);
+        cardElement.appendChild(categoryLabel);
+        cardElement.appendChild(removeButton);
+        
+        collectionContainer.appendChild(cardElement);
+    });
+}
+
+// Display your deck-building preview
+function displayDecks() {
+    const decksContainer = document.getElementById("main-content");
+    decksContainer.innerHTML += '<h2>Deck Preview</h2>';
+    
+    let savedDeck = JSON.parse(localStorage.getItem('currentDeck')) || [];
+    savedDeck.forEach(card => {
         const cardElement = document.createElement("div");
         cardElement.classList.add("card-item");
 
@@ -44,20 +65,68 @@ function displayCollection() {
         const categoryLabel = document.createElement("p");
         categoryLabel.textContent = `Category: ${card.category}`;
 
-        const removeButton = document.createElement("span");
-        removeButton.classList.add("remove-card");
-        removeButton.textContent = "Remove";
-        removeButton.onclick = () => removeCard(card.id);
-
-        cardElement.appendChild(img);
-        cardElement.appendChild(categoryLabel);
-        cardElement.appendChild(removeButton);
-
-        collectionContainer.appendChild(cardElement);
+        decksContainer.appendChild(cardElement);
     });
 }
 
-// Add a new card
+// Handle card removal from collection
+function removeCard(cardId) {
+    let storedCards = JSON.parse(localStorage.getItem('cards')) || [];
+    storedCards = storedCards.filter(card => card.id !== cardId);
+    localStorage.setItem('cards', JSON.stringify(storedCards));
+    displayCollection();
+}
+
+// Log out the user
+function logOut() {
+    localStorage.removeItem('user');
+    window.location.href = 'login.html';  // Redirect to login
+}
+
+// Display storages
+function displayStorages() {
+    const storagesContainer = document.getElementById('main-content');
+    storagesContainer.innerHTML += '<h2>Your Storages</h2>';
+
+    let storages = JSON.parse(localStorage.getItem('storages')) || {};
+    for (let storageName in storages) {
+        const storageDiv = document.createElement("div");
+        storageDiv.classList.add("storage-item");
+        storageDiv.textContent = `Storage: ${storageName}`;
+        
+        // View button for storages
+        const viewButton = document.createElement("button");
+        viewButton.textContent = "View Cards";
+        viewButton.onclick = () => displayStorageCards(storageName);
+        
+        storageDiv.appendChild(viewButton);
+        storagesContainer.appendChild(storageDiv);
+    }
+}
+
+// Display cards inside a specific storage
+function displayStorageCards(storageName) {
+    const storagesContainer = document.getElementById('main-content');
+    storagesContainer.innerHTML = '<h2>Storage: ' + storageName + '</h2>';
+    
+    let storages = JSON.parse(localStorage.getItem('storages'));
+    let storageCards = storages[storageName] || [];
+
+    storageCards.forEach(card => {
+        const cardElement = document.createElement("div");
+        cardElement.classList.add("card-item");
+
+        const img = document.createElement("img");
+        img.src = card.image;
+
+        const categoryLabel = document.createElement("p");
+        categoryLabel.textContent = `Category: ${card.category}`;
+
+        storagesContainer.appendChild(cardElement);
+    });
+}
+
+// Adding new card (from file input)
 function addNewCard() {
     const cardImage = document.getElementById("card-image").files[0];
     const cardCategory = document.getElementById("card-category").value;
@@ -79,96 +148,10 @@ function addNewCard() {
     }
 }
 
-// Remove card from storage
-function removeCard(cardId) {
+// Save card to localStorage
+function saveCardToStorage(card) {
     let storedCards = JSON.parse(localStorage.getItem('cards')) || [];
-    storedCards = storedCards.filter(card => card.id !== cardId);
+    storedCards.push(card);
     localStorage.setItem('cards', JSON.stringify(storedCards));
-    displayCollection();
 }
 
-// Create a new storage (folder/collection)
-function createStorage(storageName) {
-    let storages = JSON.parse(localStorage.getItem('storages')) || {};
-    
-    if (!storages[storageName]) {
-        storages[storageName] = [];  // Empty collection for the new storage
-        localStorage.setItem('storages', JSON.stringify(storages));
-        alert(`Storage "${storageName}" created!`);
-        displayStorages();
-    } else {
-        alert(`Storage "${storageName}" already exists.`);
-    }
-}
-
-// Transfer card to a specific storage
-function transferCardToStorage(cardId, storageName) {
-    let storages = JSON.parse(localStorage.getItem('storages'));
-    let card = getCardById(cardId);
-
-    if (storages[storageName]) {
-        storages[storageName].push(card);
-        localStorage.setItem('storages', JSON.stringify(storages));
-        alert(`Card moved to "${storageName}" storage.`);
-    } else {
-        alert(`Storage "${storageName}" doesn't exist.`);
-    }
-}
-
-// Get a card by its ID
-function getCardById(cardId) {
-    let storedCards = JSON.parse(localStorage.getItem('cards')) || [];
-    return storedCards.find(card => card.id === cardId);
-}
-
-// Display all storages
-function displayStorages() {
-    const storageContainer = document.getElementById("storages");
-    storageContainer.innerHTML = '';  // Clear current display
-
-    let storages = JSON.parse(localStorage.getItem('storages')) || {};
-    for (let storageName in storages) {
-        const storageDiv = document.createElement("div");
-        storageDiv.classList.add("storage-item");
-        storageDiv.textContent = `Storage: ${storageName}`;
-        
-        // Add a button to view the storage
-        const viewButton = document.createElement("button");
-        viewButton.textContent = "View Cards";
-        viewButton.onclick = () => displayStorageCards(storageName);
-
-        storageDiv.appendChild(viewButton);
-        storageContainer.appendChild(storageDiv);
-    }
-}
-
-// Display cards in a specific storage
-function displayStorageCards(storageName) {
-    const collectionContainer = document.getElementById("collection");
-    collectionContainer.innerHTML = '';  // Clear current display
-
-    let storages = JSON.parse(localStorage.getItem('storages'));
-    let storageCards = storages[storageName] || [];
-
-    storageCards.forEach(card => {
-        const cardElement = document.createElement("div");
-        cardElement.classList.add("card-item");
-
-        const img = document.createElement("img");
-        img.src = card.image;
-
-        const categoryLabel = document.createElement("p");
-        categoryLabel.textContent = `Category: ${card.category}`;
-
-        const removeButton = document.createElement("span");
-        removeButton.classList.add("remove-card");
-        removeButton.textContent = "Remove";
-        removeButton.onclick = () => removeCard(card.id);
-
-        cardElement.appendChild(img);
-        cardElement.appendChild(categoryLabel);
-        cardElement.appendChild(removeButton);
-
-        collectionContainer.appendChild(cardElement);
-    });
-}
