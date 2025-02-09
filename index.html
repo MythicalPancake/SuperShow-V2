@@ -1,0 +1,36 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Trading Card Collection</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <h1>Welcome, <span id="user-name"></span></h1>
+    <button onclick="logOut()">Log Out</button>
+
+    <h3>Your Cards</h3>
+    <div id="collection"></div>
+
+    <h3>Storages</h3>
+    <div id="storages"></div>
+
+    <div>
+        <h3>Create New Storage</h3>
+        <input type="text" id="storage-name" placeholder="Storage Name">
+        <button onclick="createStorage(document.getElementById('storage-name').value)">Create Storage</button>
+    </div>
+
+    <div>
+        <h3>Add New Card</h3>
+        <input type="file" id="card-image">
+        <input type="text" id="card-category" placeholder="Card Category">
+        <button onclick="addNewCard()">Add Card</button>
+    </div>
+
+    <script src="index.js"></script>
+</body>
+</html>
