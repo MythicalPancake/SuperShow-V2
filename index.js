@@ -18,6 +18,10 @@ function navigate(tab) {
     else mainContent.innerHTML = `<h1>Welcome, ${localStorage.getItem('user')}</h1><p>Manage your trading card collection!</p>`;
 }
 
+// Global variable to hold the currently selected category
+let currentCategory = null;
+
+// Update the display function to include a category filter
 function displayCollection() {
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
@@ -26,41 +30,32 @@ function displayCollection() {
         <input type="text" id="cardName" placeholder="Enter card name">
         <button onclick="addCard()">Add Card</button>
         <h2>Categories</h2>
-        <div id="categories">${categories.map(cat => `<button onclick="filterCategory('${cat}')">${cat}</button>`).join("")}</div>
+        <div id="categories">${categories.map(cat => 
+            `<button onclick="filterCategory('${cat}')">${cat}</button>`).join("")}
+        </div>
         <ul id="collection" class="draggable-list"></ul>
     `;
     loadCollection();
 }
 
-function addCard() {
-    const user = localStorage.getItem('user');
-    const name = document.getElementById('cardName').value;
-    const file = document.getElementById('cardImage').files[0];
-
-    if (!name || !file) return alert("Please provide both name and image.");
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const newCard = {
-            id: Date.now(),
-            name,
-            image: e.target.result,
-            categories: []
-        };
-        let collection = JSON.parse(localStorage.getItem(user + '_collection')) || [];
-        collection.push(newCard);
-        localStorage.setItem(user + '_collection', JSON.stringify(collection));
-        loadCollection();
-    };
-    reader.readAsDataURL(file);
+// Category filter function
+function filterCategory(category) {
+    currentCategory = category;  // Store the selected category
+    loadCollection(); // Reload the collection with the filter applied
 }
 
+// Load the collection and filter by category if needed
 function loadCollection() {
     const user = localStorage.getItem('user');
     let collection = JSON.parse(localStorage.getItem(user + '_collection')) || [];
+    
+    if (currentCategory) {
+        collection = collection.filter(card => card.categories.includes(currentCategory)); // Filter by category
+    }
+
     const collectionList = document.getElementById('collection');
     collectionList.innerHTML = "";
-    
+
     collection.forEach(card => {
         const cardElement = document.createElement('li');
         cardElement.innerHTML = `
@@ -76,28 +71,7 @@ function loadCollection() {
     });
 }
 
-function assignCategory(cardId) {
-    const category = prompt("Enter category (Competitors, Entrances, 1-30):");
-    if (!categories.includes(category)) return alert("Invalid category.");
-    
-    let user = localStorage.getItem('user');
-    let collection = JSON.parse(localStorage.getItem(user + '_collection')) || [];
-    let card = collection.find(c => c.id === cardId);
-    if (!card.categories.includes(category)) card.categories.push(category);
-    
-    localStorage.setItem(user + '_collection', JSON.stringify(collection));
-    loadCollection();
-}
-
-function removeCard(cardId) {
-    let user = localStorage.getItem('user');
-    let collection = JSON.parse(localStorage.getItem(user + '_collection')) || [];
-    collection = collection.filter(c => c.id !== cardId);
-    localStorage.setItem(user + '_collection', JSON.stringify(collection));
-    loadCollection();
-}
-
-// Deck Building
+// Display Decks with real-time updates
 function displayDecks() {
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = `
@@ -109,6 +83,7 @@ function displayDecks() {
     loadDecks();
 }
 
+// Create Deck and display it immediately
 function createDeck() {
     let user = localStorage.getItem('user');
     let decks = JSON.parse(localStorage.getItem(user + '_decks')) || [];
@@ -118,9 +93,10 @@ function createDeck() {
 
     decks.push({ name: deckName, cards: [] });
     localStorage.setItem(user + '_decks', JSON.stringify(decks));
-    loadDecks();
+    loadDecks(); // Refresh deck list after creating a new deck
 }
 
+// Load all decks from localStorage
 function loadDecks() {
     let user = localStorage.getItem('user');
     let decks = JSON.parse(localStorage.getItem(user + '_decks')) || [];
@@ -138,11 +114,12 @@ function loadDecks() {
     });
 }
 
+// Edit Deck (add cards to the deck)
 function editDeck(deckName) {
     let user = localStorage.getItem('user');
     let decks = JSON.parse(localStorage.getItem(user + '_decks')) || [];
     let deck = decks.find(d => d.name === deckName);
-    
+
     if (!deck) return;
 
     let cardName = prompt("Enter card name to add:");
@@ -155,6 +132,7 @@ function editDeck(deckName) {
     localStorage.setItem(user + '_decks', JSON.stringify(decks));
 }
 
+// Delete a deck
 function deleteDeck(deckName) {
     let user = localStorage.getItem('user');
     let decks = JSON.parse(localStorage.getItem(user + '_decks')) || [];
@@ -162,6 +140,9 @@ function deleteDeck(deckName) {
     localStorage.setItem(user + '_decks', JSON.stringify(decks));
     loadDecks();
 }
+
+navigate('home');
+
 function makeListDraggable() {
     const list = document.getElementById('collection');
     const draggables = list.querySelectorAll('li');
