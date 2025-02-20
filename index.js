@@ -63,6 +63,8 @@ function loadCollection() {
     
     collection.forEach(card => {
         const cardElement = document.createElement('li');
+        cardElement.id = `card-${card.id}`; // Set the id attribute
+        cardElement.draggable = true; // Make the element draggable
         cardElement.innerHTML = `
             <img src="${card.image}" width="100"><br>
             <strong>${card.name}</strong>
@@ -74,6 +76,8 @@ function loadCollection() {
         `;
         collectionList.appendChild(cardElement);
     });
+
+    makeListDraggable(); // Call makeListDraggable after loading the collection
 }
 
 function assignCategory(cardId) {
